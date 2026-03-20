@@ -43,52 +43,40 @@ def convert_worker(files, output_folder):
     progress_data["running"]  = False
     progress_data["finished"] = True
 
-def _run_picker(script: str):
-    """Run a PowerShell picker script, returning stripped stdout."""
-    # Wrap in a hidden helper window so the dialog always appears on top
-    wrapper = (
-        "Add-Type -AssemblyName System.Windows.Forms;"
-        "Add-Type -AssemblyName Microsoft.VisualBasic;"
-        # Create an invisible owner form so the dialog gets focus
-        "$owner = New-Object System.Windows.Forms.Form;"
-        "$owner.TopMost = $true;"
-        "$owner.StartPosition = 'Manual';"
-        "$owner.Location = New-Object System.Drawing.Point(0,0);"
-        "$owner.Size = New-Object System.Drawing.Size(1,1);"
-        "$owner.Show();"
-        "$owner.Hide();"
-        + script.replace("ShowDialog()", "ShowDialog($owner)")
-        + " $owner.Dispose();"
+def python_pick_folder(title="Select Folder"):
+    """Use modern Windows folder picker via Tkinter (forced to foreground)."""
+    script = (
+        "import tkinter as tk\n"
+        "from tkinter import filedialog\n"
+        "import sys\n"
+        "root = tk.Tk()\n"
+        "root.withdraw()\n"
+        "root.attributes('-topmost', True)\n"
+        "path = filedialog.askdirectory(title=sys.argv[1])\n"
+        "root.destroy()\n"
+        "print(path)\n"
     )
-    result = subprocess.run(
-        ["powershell", "-NoProfile", "-WindowStyle", "Hidden", "-Command", wrapper],
-        capture_output=True, text=True
-    )
+    result = subprocess.run([PYTHON, "-c", script, title], capture_output=True, text=True)
     return result.stdout.strip()
 
-def powershell_pick_folder(title="Select Folder"):
-    """Use modern Windows folder picker via PowerShell (always on top)."""
+def python_pick_files():
+    """Use modern Windows multi-file picker via Tkinter (forced to foreground)."""
     script = (
-        "[System.Windows.Forms.Application]::EnableVisualStyles();"
-        "$d = New-Object System.Windows.Forms.FolderBrowserDialog;"
-        f"$d.Description = '{title}';"
-        "$d.UseDescriptionForTitle = $true;"
-        "$d.ShowNewFolderButton = $true;"
-        "if($d.ShowDialog() -eq 'OK'){$d.SelectedPath}else{''}"
+        "import tkinter as tk\n"
+        "from tkinter import filedialog\n"
+        "root = tk.Tk()\n"
+        "root.withdraw()\n"
+        "root.attributes('-topmost', True)\n"
+        "paths = filedialog.askopenfilenames(\n"
+        "    title='Select TGS Sticker Files',\n"
+        "    filetypes=[('Telegram Stickers', '*.tgs'), ('All Files', '*.*')]\n"
+        ")\n"
+        "root.destroy()\n"
+        "for p in paths:\n"
+        "    print(p)\n"
     )
-    return _run_picker(script)
-
-def powershell_pick_files():
-    """Use modern Windows multi-file picker via PowerShell (always on top)."""
-    script = (
-        "[System.Windows.Forms.Application]::EnableVisualStyles();"
-        "$d = New-Object System.Windows.Forms.OpenFileDialog;"
-        "$d.Title = 'Select TGS Sticker Files';"
-        "$d.Filter = 'Telegram Stickers (*.tgs)|*.tgs|All Files (*.*)|*.*';"
-        "$d.Multiselect = $true;"
-        "if($d.ShowDialog() -eq 'OK'){$d.FileNames -join [char]10}else{''}"
-    )
-    raw = _run_picker(script)
+    result = subprocess.run([PYTHON, "-c", script], capture_output=True, text=True)
+    raw = result.stdout.strip()
     if not raw:
         return []
     return [f.strip() for f in raw.splitlines() if f.strip()]
@@ -100,17 +88,12 @@ def index():
 @app.route("/browse-folder", methods=["POST"])
 def browse_folder():
     title = request.json.get("title", "Select Folder")
-    path = powershell_pick_folder(title)
-    return jsonify({"path": path})
-
-@app.route("/browse-output", methods=["POST"])
-def browse_output():
-    path = powershell_pick_folder("Select Output Folder")
+    path = python_pick_folder(title)
     return jsonify({"path": path})
 
 @app.route("/browse-files", methods=["POST"])
 def browse_files():
-    files = powershell_pick_files()
+    files = python_pick_files()
     return jsonify({"files": files})
 
 @app.route("/convert", methods=["POST"])

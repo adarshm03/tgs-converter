@@ -417,10 +417,6 @@ body {
 .container > *:nth-child(5) { animation-delay: 0.20s; }
 .container > *:nth-child(6) { animation-delay: 0.24s; }
 @keyframes fadeup { to { opacity: 1; transform: translateY(0); } }
-
-.btn-browse:disabled { cursor: wait !important; }
-.btn-browse:disabled svg { animation: spin 0.8s linear infinite; opacity: 1 !important; }
-@keyframes spin { to { transform: rotate(360deg); } }
 </style>
 </head>
 <body>
@@ -592,10 +588,7 @@ body {
   }
 
   async function browseFolder() {
-    const btn = document.querySelector('#mode-folder .btn-browse');
-    setBrowseLoading(btn, true);
     const d = await post('/browse-folder', { title: 'Select folder with .tgs files' });
-    setBrowseLoading(btn, false);
     if (d.path) { folderPathEl.value = d.path; await scanFolder(d.path); }
   }
 
@@ -623,10 +616,7 @@ body {
   }, true);
 
   async function browseFiles() {
-    const btn = document.querySelector('#mode-files .btn-browse');
-    setBrowseLoading(btn, true);
     const d = await post('/browse-files', {});
-    setBrowseLoading(btn, false);
     if (d.files && d.files.length) addFiles(d.files);
   }
 
@@ -680,29 +670,11 @@ body {
   });
 
   async function browseOutput() {
-    const btn = document.querySelector('#section-output .btn-browse');
-    setBrowseLoading(btn, true);
-    const d = await post('/browse-output', {});
-    setBrowseLoading(btn, false);
+    const d = await post('/browse-folder', { title: 'Select output folder' });
     if (d.path) {
       outputPathEl.value = d.path;
       setBadge('output-badge', 'set', 'ok');
       checkReady();
-    }
-  }
-
-  function setBrowseLoading(btn, loading) {
-    if (!btn) return;
-    btn.disabled = loading;
-    if (loading) {
-      btn._origHTML = btn.innerHTML;
-      btn.innerHTML = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/>
-      </svg> Opening…`;
-      btn.style.opacity = '0.6';
-    } else {
-      btn.innerHTML = btn._origHTML || btn.innerHTML;
-      btn.style.opacity = '';
     }
   }
 
