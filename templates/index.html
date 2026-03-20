@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TGS → GIF</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@400;500;600&family=Geist:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg:       #0c0c0e;
+  --surface:  #131316;
+  --elevated: #1a1a1f;
+  --border:   #252529;
+  --bhi:      #3a3a42;
+  --text:     #e2e2e8;
+  --muted:    #6b6b78;
+  --faint:    #2e2e35;
+  --blue:     #4f8ef7;
+  --green:    #3dd68c;
+  --red:      #f76f6f;
+  --amber:    #f5a623;
+  --mono:     'Geist Mono', monospace;
+  --sans:     'Geist', sans-serif;
+  --r:        8px;
+}
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--sans);
+  font-size: 14px;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  padding: 44px 20px 80px;
+}
+.container { width: 100%; max-width: 620px; }
+
+/* header */
+.header { margin-bottom: 32px; }
+.header h1 { font-family: var(--mono); font-size: 20px; font-weight: 600; letter-spacing: -0.5px; }
+.header h1 span { color: var(--muted); }
+.header p { color: var(--muted); font-size: 13px; margin-top: 4px; }
+
+/* label */
+.label {
+  font-size: 12px; font-weight: 500; color: var(--muted);
+  margin-bottom: 6px; display: flex; align-items: center; gap: 6px;
+}
+.step {
+  background: var(--faint); color: var(--muted);
+  font-family: var(--mono); font-size: 10px;
+  padding: 1px 6px; border-radius: 4px;
+}
+
+/* ── INPUT SECTION ── */
+.input-section { margin-bottom: 16px; }
+
+/* mode tabs */
+.mode-tabs {
+  display: flex; gap: 1px;
+  background: var(--border);
+  border-radius: 6px;
+  overflow: hidden;
+  margin-bottom: 10px;
+  width: fit-content;
+}
+.mode-tab {
+  padding: 6px 14px;
+  background: var(--surface);
+  border: none;
+  color: var(--muted);
+  font-family: var(--sans);
+  font-size: 12px;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+.mode-tab.active { background: var(--elevated); color: var(--text); }
+.mode-tab:hover:not(.active) { color: var(--text); }
+
+/* drop zone */
+.drop-zone {
+  border: 1px dashed var(--bhi);
+  border-radius: var(--r);
+  padding: 28px 20px;
+  text-align: center;
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s;
+  margin-bottom: 8px;
+}
+.drop-zone:hover { border-color: var(--blue); background: rgba(79,142,247,0.03); }
+.drop-zone.drag-over { border-color: var(--blue); background: rgba(79,142,247,0.06); }
+.drop-zone.has-files { border-color: rgba(61,214,140,0.4); border-style: solid; }
+.drop-zone.error     { border-color: rgba(247,111,111,0.4); border-style: solid; }
+.dz-icon { font-size: 28px; margin-bottom: 8px; }
+.dz-title { font-size: 13px; font-weight: 500; color: var(--text); margin-bottom: 3px; }
+.dz-sub { font-size: 11px; color: var(--muted); }
+.dz-badge {
+  display: inline-block; margin-top: 10px;
+  font-family: var(--mono); font-size: 11px;
+  padding: 3px 10px; border-radius: 20px;
+  background: rgba(61,214,140,0.12); color: var(--green);
+}
+
+/* browse row */
+.browse-row {
+  display: flex; gap: 6px; align-items: center;
+}
+.path-field {
+  flex: 1;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  display: flex; align-items: center;
+  transition: border-color 0.15s;
+}
+.path-field:focus-within { border-color: var(--bhi); }
+.path-field.valid { border-color: rgba(61,214,140,0.35); }
+.path-field.error { border-color: rgba(247,111,111,0.35); }
+.path-field input {
+  flex: 1; background: transparent; border: none; outline: none;
+  color: var(--text); font-family: var(--mono); font-size: 12px;
+  padding: 9px 12px; min-width: 0;
+}
+.path-field input::placeholder { color: var(--faint); }
+.path-field-badge {
+  font-family: var(--mono); font-size: 11px;
+  padding: 2px 8px; margin-right: 8px;
+  border-radius: 4px; background: var(--faint); color: var(--muted);
+  white-space: nowrap; transition: all 0.2s; flex-shrink: 0;
+}
+.path-field-badge.ok  { background: rgba(61,214,140,0.12); color: var(--green); }
+.path-field-badge.err { background: rgba(247,111,111,0.12); color: var(--red); }
+
+.btn-browse {
+  padding: 9px 14px;
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--r); color: var(--muted);
+  font-family: var(--sans); font-size: 12px;
+  cursor: pointer; white-space: nowrap;
+  transition: border-color 0.15s, color 0.15s;
+  flex-shrink: 0;
+}
+.btn-browse:hover { border-color: var(--bhi); color: var(--text); }
+
+/* file list */
+#file-list-wrap { display: none; margin-top: 8px; }
+#file-list-wrap.show { display: block; }
+.file-list {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--r); max-height: 120px; overflow-y: auto;
+  font-family: var(--mono); font-size: 11px;
+}
+.file-list::-webkit-scrollbar { width: 3px; }
+.file-list::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+.file-item {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 5px 10px; border-bottom: 1px solid var(--border);
+  color: var(--muted);
+}
+.file-item:last-child { border-bottom: none; }
+.file-item span { color: var(--text); }
+.file-item-remove {
+  background: none; border: none; color: var(--faint);
+  cursor: pointer; font-size: 14px; line-height: 1;
+  padding: 0 2px; transition: color 0.15s;
+}
+.file-item-remove:hover { color: var(--red); }
+.file-list-header {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 6px 10px; border-bottom: 1px solid var(--border);
+  color: var(--muted); font-size: 11px;
+}
+.btn-clear-all {
+  background: none; border: none; color: var(--muted);
+  font-size: 11px; cursor: pointer; font-family: var(--mono);
+  transition: color 0.15s;
+}
+.btn-clear-all:hover { color: var(--red); }
+
+/* output */
+.output-section { margin-bottom: 20px; }
+
+/* divider */
+.divider { height: 1px; background: var(--border); margin: 4px 0 18px; }
+
+/* button row */
+.btn-row { display: flex; gap: 8px; margin-bottom: 20px; }
+#btn-convert {
+  flex: 1; padding: 10px 20px;
+  background: var(--blue); border: none; border-radius: var(--r);
+  color: #fff; font-family: var(--sans); font-size: 13px; font-weight: 600;
+  cursor: pointer; transition: opacity 0.15s;
+}
+#btn-convert:hover:not(:disabled) { opacity: 0.85; }
+#btn-convert:disabled { opacity: 0.3; cursor: not-allowed; }
+
+#btn-stop {
+  display: none; padding: 10px 16px;
+  background: transparent; border: 1px solid rgba(247,111,111,0.4);
+  border-radius: var(--r); color: var(--red);
+  font-family: var(--sans); font-size: 13px; font-weight: 500;
+  cursor: pointer; transition: background 0.15s, border-color 0.15s;
+  white-space: nowrap;
+}
+#btn-stop.show { display: block; }
+#btn-stop:hover { background: rgba(247,111,111,0.08); border-color: var(--red); }
+
+/* progress */
+#progress-section { display: none; }
+#progress-section.show { display: block; }
+.progress-header { display: flex; justify-content: space-between; margin-bottom: 6px; }
+.progress-status { font-size: 12px; color: var(--muted); font-family: var(--mono); }
+.progress-pct    { font-size: 12px; color: var(--muted); font-family: var(--mono); }
+.progress-track {
+  height: 2px; background: var(--faint); border-radius: 999px;
+  overflow: hidden; margin-bottom: 14px;
+}
+.progress-fill {
+  height: 100%; width: 0%; background: var(--blue);
+  border-radius: 999px; transition: width 0.4s ease;
+}
+.progress-fill.done    { background: var(--green); }
+.progress-fill.stopped { background: var(--amber); }
+
+.log-wrap { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r); overflow: hidden; }
+.log-titlebar {
+  padding: 7px 12px; border-bottom: 1px solid var(--border);
+  font-family: var(--mono); font-size: 11px; color: var(--muted);
+  display: flex; justify-content: space-between;
+}
+#log {
+  height: 200px; overflow-y: auto;
+  padding: 10px 12px; font-family: var(--mono); font-size: 12px; line-height: 1.9;
+}
+#log::-webkit-scrollbar { width: 3px; }
+#log::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+.log-ok      { color: var(--green); }
+.log-err     { color: var(--red); }
+.log-done    { color: var(--blue); margin-top: 4px; }
+.log-stopped { color: var(--amber); margin-top: 4px; }
+
+#summary { display: none; margin-top: 12px; }
+#summary.show { display: grid; grid-template-columns: repeat(3,1fr); gap: 8px; }
+.stat {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--r); padding: 12px; text-align: center;
+}
+.stat-n { font-family: var(--mono); font-size: 22px; font-weight: 600; line-height: 1; }
+.stat-l { font-size: 11px; color: var(--muted); margin-top: 4px; text-transform: uppercase; letter-spacing: 0.5px; }
+.n-total { color: var(--text); }
+.n-ok    { color: var(--green); }
+.n-err   { color: var(--red); }
+
+#btn-open {
+  display: none; width: 100%; margin-top: 8px; padding: 9px;
+  background: transparent; border: 1px solid var(--border);
+  border-radius: var(--r); color: var(--muted);
+  font-family: var(--sans); font-size: 13px; cursor: pointer;
+  transition: border-color 0.15s, color 0.15s;
+}
+#btn-open.show { display: block; }
+#btn-open:hover { border-color: var(--green); color: var(--green); }
+
+/* animations */
+.container > * { opacity: 0; transform: translateY(6px); animation: up 0.35s ease forwards; }
+.container > *:nth-child(1) { animation-delay: 0.05s; }
+.container > *:nth-child(2) { animation-delay: 0.10s; }
+.container > *:nth-child(3) { animation-delay: 0.15s; }
+.container > *:nth-child(4) { animation-delay: 0.18s; }
+.container > *:nth-child(5) { animation-delay: 0.21s; }
+.container > *:nth-child(6) { animation-delay: 0.24s; }
+@keyframes up { to { opacity: 1; transform: translateY(0); } }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <div class="header">
+    <h1>TGS <span>→</span> GIF</h1>
+    <p>Convert Telegram sticker packs to animated GIFs</p>
+  </div>
+
+  <!-- INPUT -->
+  <div class="input-section">
+    <div class="label"><span class="step">01</span> Select stickers</div>
+
+    <div class="mode-tabs">
+      <button class="mode-tab active" id="tab-folder" onclick="setMode('folder')">Folder</button>
+      <button class="mode-tab" id="tab-files" onclick="setMode('files')">Individual files</button>
+    </div>
+
+    <!-- FOLDER MODE -->
+    <div id="mode-folder">
+      <div class="drop-zone" id="folder-drop">
+        <div class="dz-icon">📁</div>
+        <div class="dz-title">Drop folder here</div>
+        <div class="dz-sub">or use the Browse button below</div>
+        <div class="dz-badge" id="folder-badge" style="display:none"></div>
+      </div>
+      <div class="browse-row">
+        <div class="path-field" id="folder-field">
+          <input type="text" id="folder-path" placeholder="D:\telegram\HANGSEED27.webp\HANGSEED27" autocomplete="off" spellcheck="false">
+          <div class="path-field-badge" id="folder-field-badge">—</div>
+        </div>
+        <button class="btn-browse" onclick="browseFolder()">Browse…</button>
+      </div>
+    </div>
+
+    <!-- FILES MODE -->
+    <div id="mode-files" style="display:none">
+      <div class="drop-zone" id="files-drop">
+        <div class="dz-icon">🗂️</div>
+        <div class="dz-title">Drop .tgs files here</div>
+        <div class="dz-sub">or use the Browse button to pick individual files</div>
+        <div class="dz-badge" id="files-badge" style="display:none"></div>
+      </div>
+      <div class="browse-row">
+        <button class="btn-browse" style="flex:1" onclick="browseFiles()">Browse files…</button>
+        <button class="btn-browse" onclick="clearFiles()">Clear all</button>
+      </div>
+      <div id="file-list-wrap">
+        <div class="file-list" id="file-list"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- OUTPUT -->
+  <div class="output-section">
+    <div class="label"><span class="step">02</span> Output folder</div>
+    <div class="browse-row">
+      <div class="path-field" id="output-field">
+        <input type="text" id="output-path" placeholder="D:\telegram\out" autocomplete="off" spellcheck="false">
+        <div class="path-field-badge" id="output-badge">—</div>
+      </div>
+      <button class="btn-browse" onclick="browseOutput()">Browse…</button>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="btn-row">
+    <button id="btn-convert" disabled>Convert</button>
+    <button id="btn-stop">Stop</button>
+  </div>
+
+  <!-- PROGRESS -->
+  <div id="progress-section">
+    <div class="progress-header">
+      <span class="progress-status" id="prog-status">Starting…</span>
+      <span class="progress-pct" id="prog-pct">0%</span>
+    </div>
+    <div class="progress-track">
+      <div class="progress-fill" id="prog-fill"></div>
+    </div>
+    <div class="log-wrap">
+      <div class="log-titlebar">
+        <span>Output</span>
+        <span id="log-count">0 / 0</span>
+      </div>
+      <div id="log"></div>
+    </div>
+    <div id="summary">
+      <div class="stat"><div class="stat-n n-total" id="s-total">0</div><div class="stat-l">Total</div></div>
+      <div class="stat"><div class="stat-n n-ok"    id="s-ok">0</div><div class="stat-l">Converted</div></div>
+      <div class="stat"><div class="stat-n n-err"   id="s-err">0</div><div class="stat-l">Failed</div></div>
+    </div>
+    <button id="btn-open">Open output folder</button>
+  </div>
+
+</div>
+<script>
+  let mode         = 'folder';
+  let selectedFiles = [];
+  let pollTimer    = null;
+  let lastLogLen   = 0;
+  let scanTimer    = null;
+
+  // ── mode switch ───────────────────────────────────────────────────────
+  function setMode(m) {
+    mode = m;
+    document.getElementById('mode-folder').style.display = m === 'folder' ? 'block' : 'none';
+    document.getElementById('mode-files').style.display  = m === 'files'  ? 'block' : 'none';
+    document.getElementById('tab-folder').classList.toggle('active', m === 'folder');
+    document.getElementById('tab-files').classList.toggle('active',  m === 'files');
+    checkReady();
+  }
+
+  // ── folder mode ───────────────────────────────────────────────────────
+  const folderPathEl  = document.getElementById('folder-path');
+  const folderDrop    = document.getElementById('folder-drop');
+  const folderBadge   = document.getElementById('folder-badge');
+  const folderFieldBadge = document.getElementById('folder-field-badge');
+  const folderField   = document.getElementById('folder-field');
+
+  folderPathEl.addEventListener('input', () => {
+    clearTimeout(scanTimer);
+    folderFieldBadge.textContent = '…';
+    folderFieldBadge.className = 'path-field-badge';
+    folderField.className = 'path-field';
+    scanTimer = setTimeout(() => scanFolder(folderPathEl.value.trim()), 500);
+  });
+
+  setupFolderDrop(folderDrop, async (path) => {
+    folderPathEl.value = path;
+    await scanFolder(path);
+  });
+
+  async function scanFolder(path) {
+    if (!path) { folderFieldBadge.textContent = '—'; checkReady(); return; }
+    folderFieldBadge.textContent = '…';
+    try {
+      const r = await fetch('/scan-folder', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ folder: path })
+      });
+      const d = await r.json();
+      if (d.error || d.count === 0) {
+        folderFieldBadge.textContent = d.count === 0 ? 'no .tgs' : 'not found';
+        folderFieldBadge.className = 'path-field-badge err';
+        folderField.className = 'path-field error';
+        folderBadge.style.display = 'none';
+        folderDrop.className = 'drop-zone error';
+      } else {
+        folderFieldBadge.textContent = `${d.count} files`;
+        folderFieldBadge.className = 'path-field-badge ok';
+        folderField.className = 'path-field valid';
+        folderBadge.textContent = `${d.count} .tgs files found`;
+        folderBadge.style.display = 'inline-block';
+        folderDrop.className = 'drop-zone has-files';
+      }
+    } catch(e) {
+      folderFieldBadge.textContent = 'error';
+      folderFieldBadge.className = 'path-field-badge err';
+    }
+    checkReady();
+  }
+
+  async function browseFolder() {
+    const r = await fetch('/browse-folder', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ title: 'Select folder with .tgs files' })
+    });
+    const d = await r.json();
+    if (d.path) {
+      folderPathEl.value = d.path;
+      await scanFolder(d.path);
+    }
+  }
+
+  // ── files mode ────────────────────────────────────────────────────────
+  const filesDrop  = document.getElementById('files-drop');
+  const filesBadge = document.getElementById('files-badge');
+  const fileListWrap = document.getElementById('file-list-wrap');
+  const fileListEl   = document.getElementById('file-list');
+
+  setupFolderDrop(filesDrop, async (path) => {
+    // dropped a folder in files mode — scan it
+    const r = await fetch('/scan-folder', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ folder: path })
+    });
+    const d = await r.json();
+    if (d.files && d.files.length > 0) {
+      addFiles(d.files);
+    }
+  });
+
+  // also handle individual file drops
+  filesDrop.addEventListener('drop', async (e) => {
+    e.preventDefault();
+    filesDrop.classList.remove('drag-over');
+    const paths = [];
+    for (const item of e.dataTransfer.items) {
+      const entry = item.webkitGetAsEntry && item.webkitGetAsEntry();
+      if (entry && entry.isFile && entry.name.toLowerCase().endsWith('.tgs')) {
+        const file = item.getAsFile();
+        if (file && file.path) paths.push(file.path);
+      }
+    }
+    if (paths.length > 0) addFiles(paths);
+  }, true); // use capture to override setupFolderDrop
+
+  async function browseFiles() {
+    const r = await fetch('/browse-files', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({})
+    });
+    const d = await r.json();
+    if (d.files && d.files.length > 0) addFiles(d.files);
+  }
+
+  function addFiles(paths) {
+    const existing = new Set(selectedFiles);
+    paths.forEach(p => { if (p && p.toLowerCase().endsWith('.tgs')) existing.add(p); });
+    selectedFiles = [...existing];
+    renderFileList();
+    checkReady();
+  }
+
+  function removeFile(path) {
+    selectedFiles = selectedFiles.filter(f => f !== path);
+    renderFileList();
+    checkReady();
+  }
+
+  function clearFiles() {
+    selectedFiles = [];
+    renderFileList();
+    checkReady();
+  }
+
+  function renderFileList() {
+    const n = selectedFiles.length;
+    if (n === 0) {
+      fileListWrap.classList.remove('show');
+      filesBadge.style.display = 'none';
+      filesDrop.className = 'drop-zone';
+      return;
+    }
+    filesBadge.textContent = `${n} file${n !== 1 ? 's' : ''} selected`;
+    filesBadge.style.display = 'inline-block';
+    filesDrop.className = 'drop-zone has-files';
+    fileListWrap.classList.add('show');
+    fileListEl.innerHTML = `
+      <div class="file-list-header">
+        <span>${n} file${n !== 1 ? 's' : ''}</span>
+        <button class="btn-clear-all" onclick="clearFiles()">Clear all</button>
+      </div>
+    ` + selectedFiles.map(f => `
+      <div class="file-item">
+        <span>${f.split(/[\\/]/).pop()}</span>
+        <button class="file-item-remove" onclick="removeFile('${f.replace(/\\/g,'\\\\')}')" title="Remove">×</button>
+      </div>
+    `).join('');
+  }
+
+  // ── output ────────────────────────────────────────────────────────────
+  const outputPathEl = document.getElementById('output-path');
+  const outputBadge  = document.getElementById('output-badge');
+  const outputField  = document.getElementById('output-field');
+
+  outputPathEl.addEventListener('input', () => {
+    const v = outputPathEl.value.trim();
+    if (v) { outputBadge.textContent = 'set'; outputBadge.className = 'path-field-badge ok'; }
+    else   { outputBadge.textContent = '—';   outputBadge.className = 'path-field-badge'; }
+    checkReady();
+  });
+
+  async function browseOutput() {
+    const r = await fetch('/browse-folder', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ title: 'Select output folder' })
+    });
+    const d = await r.json();
+    if (d.path) {
+      outputPathEl.value = d.path;
+      outputBadge.textContent = 'set';
+      outputBadge.className = 'path-field-badge ok';
+      checkReady();
+    }
+  }
+
+  // ── drag & drop helper ────────────────────────────────────────────────
+  function setupFolderDrop(zone, onFolder) {
+    zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('drag-over'); });
+    zone.addEventListener('dragleave', () => zone.classList.remove('drag-over'));
+    zone.addEventListener('drop', async (e) => {
+      e.preventDefault();
+      zone.classList.remove('drag-over');
+      for (const item of e.dataTransfer.items) {
+        const entry = item.webkitGetAsEntry && item.webkitGetAsEntry();
+        if (entry && entry.isDirectory) {
+          const file = e.dataTransfer.files[0];
+          const path = file && file.path ? file.path : entry.fullPath;
+          if (path) { await onFolder(path); return; }
+        }
+      }
+    });
+    zone.addEventListener('click', () => {
+      if (zone.id === 'folder-drop') browseFolder();
+      else browseFiles();
+    });
+  }
+
+  // ── ready check ───────────────────────────────────────────────────────
+  function checkReady() {
+    const hasInput = mode === 'folder'
+      ? (document.getElementById('folder-field-badge').classList.contains('ok'))
+      : selectedFiles.length > 0;
+    const hasOutput = outputPathEl.value.trim().length > 0;
+    document.getElementById('btn-convert').disabled = !(hasInput && hasOutput);
+  }
+
+  // ── convert ───────────────────────────────────────────────────────────
+  document.getElementById('btn-convert').addEventListener('click', async () => {
+    const out = outputPathEl.value.trim();
+    let files = [];
+
+    if (mode === 'folder') {
+      const r = await fetch('/scan-folder', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ folder: folderPathEl.value.trim() })
+      });
+      const d = await r.json();
+      files = d.files || [];
+      if (!files.length) { alert('No .tgs files found in that folder'); return; }
+    } else {
+      files = selectedFiles;
+      if (!files.length) { alert('No files selected'); return; }
+    }
+
+    document.getElementById('btn-convert').disabled = true;
+    document.getElementById('btn-stop').classList.add('show');
+    document.getElementById('progress-section').classList.add('show');
+    document.getElementById('summary').classList.remove('show');
+    document.getElementById('btn-open').classList.remove('show');
+    document.getElementById('log').innerHTML = '';
+    lastLogLen = 0;
+    document.getElementById('prog-fill').className = 'progress-fill';
+    document.getElementById('prog-fill').style.width = '0%';
+    document.getElementById('prog-status').textContent = 'Starting…';
+    document.getElementById('prog-pct').textContent = '0%';
+    document.getElementById('log-count').textContent = '0 / 0';
+
+    const r = await fetch('/convert', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ files, output: out })
+    });
+    const d = await r.json();
+    if (d.error) {
+      alert(d.error);
+      document.getElementById('btn-convert').disabled = false;
+      document.getElementById('btn-stop').classList.remove('show');
+      return;
+    }
+    pollTimer = setInterval(poll, 500);
+  });
+
+  // ── stop ──────────────────────────────────────────────────────────────
+  document.getElementById('btn-stop').addEventListener('click', async () => {
+    await fetch('/stop', { method: 'POST' });
+    document.getElementById('btn-stop').classList.remove('show');
+  });
+
+  // ── poll ──────────────────────────────────────────────────────────────
+  async function poll() {
+    const r = await fetch('/progress');
+    const d = await r.json();
+    const pct = d.total > 0 ? Math.round((d.done / d.total) * 100) : 0;
+    document.getElementById('prog-fill').style.width = pct + '%';
+    document.getElementById('prog-pct').textContent  = pct + '%';
+    document.getElementById('log-count').textContent = `${d.done} / ${d.total}`;
+    document.getElementById('prog-status').textContent = d.running
+      ? `Converting… ${d.done} of ${d.total}` : d.stopped ? 'Stopped' : 'Done';
+
+    const logEl = document.getElementById('log');
+    const newEntries = d.log.slice(lastLogLen);
+    lastLogLen = d.log.length;
+    for (const e of newEntries) {
+      const div = document.createElement('div');
+      div.className = e.ok ? 'log-ok' : 'log-err';
+      div.textContent = (e.ok ? '✓  ' : '✗  ') + e.name + (e.ok ? '' : '   ' + e.msg);
+      logEl.appendChild(div);
+      logEl.scrollTop = logEl.scrollHeight;
+    }
+
+    if (d.finished) {
+      clearInterval(pollTimer);
+      document.getElementById('btn-stop').classList.remove('show');
+      document.getElementById('btn-convert').disabled = false;
+      const ok  = d.log.filter(e => e.ok).length;
+      const err = d.log.length - ok;
+      const msg = document.createElement('div');
+      if (d.stopped) {
+        document.getElementById('prog-fill').className = 'progress-fill stopped';
+        msg.className = 'log-stopped';
+        msg.textContent = `Stopped — ${ok} of ${d.done} converted`;
+      } else {
+        document.getElementById('prog-fill').className = 'progress-fill done';
+        msg.className = 'log-done';
+        msg.textContent = `${ok} of ${d.total} converted successfully`;
+      }
+      logEl.appendChild(msg);
+      logEl.scrollTop = logEl.scrollHeight;
+      document.getElementById('s-total').textContent = d.done;
+      document.getElementById('s-ok').textContent    = ok;
+      document.getElementById('s-err').textContent   = err;
+      document.getElementById('summary').classList.add('show');
+      document.getElementById('btn-open').classList.add('show');
+    }
+  }
+
+  document.getElementById('btn-open').addEventListener('click', () => {
+    fetch('/open-folder', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ folder: outputPathEl.value.trim() })
+    });
+  });
+</script>
+</body>
+</html>
