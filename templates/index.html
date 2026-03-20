@@ -11,19 +11,19 @@
 :root {
   --bg:       #0c0c0e;
   --surface:  #131316;
-  --elevated: #1a1a1f;
-  --border:   #252529;
-  --bhi:      #3a3a42;
-  --text:     #e2e2e8;
-  --muted:    #6b6b78;
-  --faint:    #2e2e35;
-  --blue:     #4f8ef7;
-  --green:    #3dd68c;
-  --red:      #f76f6f;
-  --amber:    #f5a623;
+  --elevated: #1c1c21;
+  --border:   #27272d;
+  --bhi:      #3e3e48;
+  --text:     #e4e4ec;
+  --muted:    #68687a;
+  --faint:    #1e1e25;
+  --blue:     #4b87f5;
+  --green:    #36c97e;
+  --red:      #f06060;
+  --amber:    #f0a020;
   --mono:     'Geist Mono', monospace;
   --sans:     'Geist', sans-serif;
-  --r:        8px;
+  --r:        10px;
 }
 body {
   background: var(--bg);
@@ -33,334 +33,497 @@ body {
   min-height: 100vh;
   display: flex;
   justify-content: center;
-  padding: 44px 20px 80px;
+  padding: 52px 24px 100px;
 }
-.container { width: 100%; max-width: 620px; }
+.container { width: 100%; max-width: 640px; }
 
-/* header */
-.header { margin-bottom: 32px; }
-.header h1 { font-family: var(--mono); font-size: 20px; font-weight: 600; letter-spacing: -0.5px; }
-.header h1 span { color: var(--muted); }
-.header p { color: var(--muted); font-size: 13px; margin-top: 4px; }
+/* ── HEADER ── */
+.header { margin-bottom: 40px; }
+.header h1 {
+  font-family: var(--mono);
+  font-size: 22px;
+  font-weight: 600;
+  letter-spacing: -0.5px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.header h1 .arrow { color: var(--muted); font-weight: 400; }
+.header h1 .tgs  { color: var(--text); }
+.header h1 .gif  { color: var(--blue); }
+.header p { color: var(--muted); font-size: 13px; margin-top: 6px; }
 
-/* label */
+/* ── SECTION LABEL ── */
 .label {
-  font-size: 12px; font-weight: 500; color: var(--muted);
-  margin-bottom: 6px; display: flex; align-items: center; gap: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--muted);
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 .step {
-  background: var(--faint); color: var(--muted);
-  font-family: var(--mono); font-size: 10px;
-  padding: 1px 6px; border-radius: 4px;
+  width: 18px; height: 18px;
+  background: var(--faint);
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 9px;
+  color: var(--muted);
+  font-family: var(--mono);
 }
 
-/* ── INPUT SECTION ── */
-.input-section { margin-bottom: 16px; }
-
-/* mode tabs */
+/* ── MODE TABS ── */
 .mode-tabs {
-  display: flex; gap: 1px;
-  background: var(--border);
-  border-radius: 6px;
-  overflow: hidden;
-  margin-bottom: 10px;
-  width: fit-content;
+  display: inline-flex;
+  background: var(--faint);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 3px;
+  gap: 2px;
+  margin-bottom: 12px;
 }
 .mode-tab {
-  padding: 6px 14px;
-  background: var(--surface);
+  padding: 5px 16px;
   border: none;
+  border-radius: 6px;
+  background: transparent;
   color: var(--muted);
   font-family: var(--sans);
   font-size: 12px;
+  font-weight: 500;
   cursor: pointer;
   transition: background 0.15s, color 0.15s;
 }
-.mode-tab.active { background: var(--elevated); color: var(--text); }
+.mode-tab.active {
+  background: var(--elevated);
+  color: var(--text);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+}
 .mode-tab:hover:not(.active) { color: var(--text); }
 
-/* drop zone */
+/* ── DROP ZONE ── */
 .drop-zone {
-  border: 1px dashed var(--bhi);
+  border: 1.5px dashed var(--border);
   border-radius: var(--r);
-  padding: 28px 20px;
+  padding: 36px 24px;
   text-align: center;
   cursor: pointer;
-  transition: border-color 0.15s, background 0.15s;
-  margin-bottom: 8px;
+  transition: all 0.2s;
+  position: relative;
+  margin-bottom: 10px;
+  background: var(--faint);
 }
-.drop-zone:hover { border-color: var(--blue); background: rgba(79,142,247,0.03); }
-.drop-zone.drag-over { border-color: var(--blue); background: rgba(79,142,247,0.06); }
-.drop-zone.has-files { border-color: rgba(61,214,140,0.4); border-style: solid; }
-.drop-zone.error     { border-color: rgba(247,111,111,0.4); border-style: solid; }
-.dz-icon { font-size: 28px; margin-bottom: 8px; }
-.dz-title { font-size: 13px; font-weight: 500; color: var(--text); margin-bottom: 3px; }
-.dz-sub { font-size: 11px; color: var(--muted); }
+.drop-zone:hover {
+  border-color: var(--blue);
+  background: rgba(75,135,245,0.04);
+}
+.drop-zone.drag-over {
+  border-color: var(--blue);
+  background: rgba(75,135,245,0.08);
+  transform: scale(1.005);
+}
+.drop-zone.has-files {
+  border-color: rgba(54,201,126,0.5);
+  border-style: solid;
+  background: rgba(54,201,126,0.03);
+}
+.drop-zone.error {
+  border-color: rgba(240,96,96,0.5);
+  border-style: solid;
+}
+.dz-icon { font-size: 32px; margin-bottom: 10px; line-height: 1; }
+.dz-title { font-size: 14px; font-weight: 500; color: var(--text); margin-bottom: 4px; }
+.dz-sub { font-size: 12px; color: var(--muted); line-height: 1.5; }
 .dz-badge {
-  display: inline-block; margin-top: 10px;
-  font-family: var(--mono); font-size: 11px;
-  padding: 3px 10px; border-radius: 20px;
-  background: rgba(61,214,140,0.12); color: var(--green);
+  display: none;
+  margin-top: 12px;
+  font-family: var(--mono);
+  font-size: 11px;
+  padding: 4px 12px;
+  border-radius: 20px;
+  background: rgba(54,201,126,0.12);
+  color: var(--green);
+  border: 1px solid rgba(54,201,126,0.2);
 }
+.dz-badge.show { display: inline-block; }
 
-/* browse row */
-.browse-row {
-  display: flex; gap: 6px; align-items: center;
+/* ── INPUT ROW (path + browse) ── */
+.input-row {
+  display: flex;
+  gap: 8px;
+  align-items: stretch;
+  margin-bottom: 20px;
 }
-.path-field {
+.path-box {
   flex: 1;
+  display: flex;
+  align-items: center;
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--r);
-  display: flex; align-items: center;
   transition: border-color 0.15s;
+  min-width: 0;
 }
-.path-field:focus-within { border-color: var(--bhi); }
-.path-field.valid { border-color: rgba(61,214,140,0.35); }
-.path-field.error { border-color: rgba(247,111,111,0.35); }
-.path-field input {
-  flex: 1; background: transparent; border: none; outline: none;
-  color: var(--text); font-family: var(--mono); font-size: 12px;
-  padding: 9px 12px; min-width: 0;
+.path-box:focus-within { border-color: var(--bhi); }
+.path-box.valid { border-color: rgba(54,201,126,0.4); }
+.path-box.error { border-color: rgba(240,96,96,0.4); }
+.path-box input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: var(--text);
+  font-family: var(--mono);
+  font-size: 12px;
+  padding: 10px 12px;
+  min-width: 0;
 }
-.path-field input::placeholder { color: var(--faint); }
-.path-field-badge {
-  font-family: var(--mono); font-size: 11px;
-  padding: 2px 8px; margin-right: 8px;
-  border-radius: 4px; background: var(--faint); color: var(--muted);
-  white-space: nowrap; transition: all 0.2s; flex-shrink: 0;
+.path-box input::placeholder { color: var(--muted); opacity: 0.5; }
+.path-badge {
+  font-family: var(--mono);
+  font-size: 11px;
+  padding: 3px 9px;
+  margin-right: 8px;
+  border-radius: 5px;
+  background: var(--faint);
+  color: var(--muted);
+  white-space: nowrap;
+  flex-shrink: 0;
+  transition: all 0.2s;
+  border: 1px solid var(--border);
 }
-.path-field-badge.ok  { background: rgba(61,214,140,0.12); color: var(--green); }
-.path-field-badge.err { background: rgba(247,111,111,0.12); color: var(--red); }
+.path-badge.ok  { background: rgba(54,201,126,0.1);  color: var(--green); border-color: rgba(54,201,126,0.2); }
+.path-badge.err { background: rgba(240,96,96,0.1);   color: var(--red);   border-color: rgba(240,96,96,0.2); }
 
 .btn-browse {
-  padding: 9px 14px;
-  background: var(--surface); border: 1px solid var(--border);
-  border-radius: var(--r); color: var(--muted);
-  font-family: var(--sans); font-size: 12px;
-  cursor: pointer; white-space: nowrap;
-  transition: border-color 0.15s, color 0.15s;
+  padding: 10px 16px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  color: var(--muted);
+  font-family: var(--sans);
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  white-space: nowrap;
   flex-shrink: 0;
+  transition: all 0.15s;
+  display: flex;
+  align-items: center;
+  gap: 6px;
 }
-.btn-browse:hover { border-color: var(--bhi); color: var(--text); }
+.btn-browse:hover {
+  background: var(--elevated);
+  border-color: var(--bhi);
+  color: var(--text);
+}
+.btn-browse svg { opacity: 0.6; }
+.btn-browse:hover svg { opacity: 1; }
 
-/* file list */
-#file-list-wrap { display: none; margin-top: 8px; }
-#file-list-wrap.show { display: block; }
+/* ── FILE LIST ── */
+.file-list-wrap { display: none; margin-bottom: 20px; }
+.file-list-wrap.show { display: block; }
+.file-list-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 12px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-bottom: none;
+  border-radius: var(--r) var(--r) 0 0;
+  font-size: 11px;
+  color: var(--muted);
+}
+.btn-clear {
+  background: none; border: none;
+  color: var(--muted); font-size: 11px;
+  cursor: pointer; font-family: var(--mono);
+  transition: color 0.15s;
+}
+.btn-clear:hover { color: var(--red); }
 .file-list {
-  background: var(--surface); border: 1px solid var(--border);
-  border-radius: var(--r); max-height: 120px; overflow-y: auto;
-  font-family: var(--mono); font-size: 11px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 0 0 var(--r) var(--r);
+  max-height: 140px;
+  overflow-y: auto;
+  font-family: var(--mono);
+  font-size: 11px;
 }
 .file-list::-webkit-scrollbar { width: 3px; }
 .file-list::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
 .file-item {
-  display: flex; align-items: center; justify-content: space-between;
-  padding: 5px 10px; border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 12px;
+  border-bottom: 1px solid var(--border);
   color: var(--muted);
+  transition: background 0.1s;
 }
 .file-item:last-child { border-bottom: none; }
-.file-item span { color: var(--text); }
+.file-item:hover { background: var(--faint); }
+.file-item-name { color: var(--text); flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .file-item-remove {
-  background: none; border: none; color: var(--faint);
-  cursor: pointer; font-size: 14px; line-height: 1;
-  padding: 0 2px; transition: color 0.15s;
-}
-.file-item-remove:hover { color: var(--red); }
-.file-list-header {
-  display: flex; justify-content: space-between; align-items: center;
-  padding: 6px 10px; border-bottom: 1px solid var(--border);
-  color: var(--muted); font-size: 11px;
-}
-.btn-clear-all {
-  background: none; border: none; color: var(--muted);
-  font-size: 11px; cursor: pointer; font-family: var(--mono);
+  background: none; border: none;
+  color: var(--muted); font-size: 15px; line-height: 1;
+  cursor: pointer; padding: 0 0 0 8px; flex-shrink: 0;
   transition: color 0.15s;
 }
-.btn-clear-all:hover { color: var(--red); }
+.file-item-remove:hover { color: var(--red); }
 
-/* output */
-.output-section { margin-bottom: 20px; }
+/* ── DIVIDER ── */
+.divider { height: 1px; background: var(--border); margin: 8px 0 24px; }
 
-/* divider */
-.divider { height: 1px; background: var(--border); margin: 4px 0 18px; }
-
-/* button row */
-.btn-row { display: flex; gap: 8px; margin-bottom: 20px; }
+/* ── ACTION BUTTONS ── */
+.btn-row { display: flex; gap: 10px; margin-bottom: 24px; }
 #btn-convert {
-  flex: 1; padding: 10px 20px;
-  background: var(--blue); border: none; border-radius: var(--r);
-  color: #fff; font-family: var(--sans); font-size: 13px; font-weight: 600;
-  cursor: pointer; transition: opacity 0.15s;
+  flex: 1;
+  padding: 11px 24px;
+  background: var(--blue);
+  border: none;
+  border-radius: var(--r);
+  color: #fff;
+  font-family: var(--sans);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.15s, transform 0.1s;
+  letter-spacing: 0.2px;
 }
-#btn-convert:hover:not(:disabled) { opacity: 0.85; }
-#btn-convert:disabled { opacity: 0.3; cursor: not-allowed; }
+#btn-convert:hover:not(:disabled) { opacity: 0.88; }
+#btn-convert:active:not(:disabled) { transform: scale(0.99); }
+#btn-convert:disabled { opacity: 0.25; cursor: not-allowed; }
 
 #btn-stop {
-  display: none; padding: 10px 16px;
-  background: transparent; border: 1px solid rgba(247,111,111,0.4);
-  border-radius: var(--r); color: var(--red);
-  font-family: var(--sans); font-size: 13px; font-weight: 500;
-  cursor: pointer; transition: background 0.15s, border-color 0.15s;
+  display: none;
+  padding: 11px 18px;
+  background: transparent;
+  border: 1px solid rgba(240,96,96,0.35);
+  border-radius: var(--r);
+  color: var(--red);
+  font-family: var(--sans);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s;
   white-space: nowrap;
 }
-#btn-stop.show { display: block; }
-#btn-stop:hover { background: rgba(247,111,111,0.08); border-color: var(--red); }
+#btn-stop.show { display: flex; align-items: center; gap: 6px; }
+#btn-stop:hover { background: rgba(240,96,96,0.08); border-color: var(--red); }
 
-/* progress */
+/* ── PROGRESS ── */
 #progress-section { display: none; }
 #progress-section.show { display: block; }
-.progress-header { display: flex; justify-content: space-between; margin-bottom: 6px; }
-.progress-status { font-size: 12px; color: var(--muted); font-family: var(--mono); }
-.progress-pct    { font-size: 12px; color: var(--muted); font-family: var(--mono); }
-.progress-track {
-  height: 2px; background: var(--faint); border-radius: 999px;
-  overflow: hidden; margin-bottom: 14px;
-}
-.progress-fill {
-  height: 100%; width: 0%; background: var(--blue);
-  border-radius: 999px; transition: width 0.4s ease;
-}
-.progress-fill.done    { background: var(--green); }
-.progress-fill.stopped { background: var(--amber); }
 
-.log-wrap { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r); overflow: hidden; }
-.log-titlebar {
-  padding: 7px 12px; border-bottom: 1px solid var(--border);
-  font-family: var(--mono); font-size: 11px; color: var(--muted);
-  display: flex; justify-content: space-between;
+.prog-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+.prog-status { font-size: 12px; color: var(--muted); font-family: var(--mono); }
+.prog-pct    { font-size: 12px; color: var(--muted); font-family: var(--mono); }
+
+.prog-track {
+  height: 3px;
+  background: var(--faint);
+  border-radius: 999px;
+  overflow: hidden;
+  margin-bottom: 16px;
+}
+.prog-fill {
+  height: 100%; width: 0%;
+  background: var(--blue);
+  border-radius: 999px;
+  transition: width 0.35s ease;
+}
+.prog-fill.done    { background: var(--green); }
+.prog-fill.stopped { background: var(--amber); }
+
+.log-wrap {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  overflow: hidden;
+}
+.log-bar {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 14px;
+  border-bottom: 1px solid var(--border);
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--muted);
 }
 #log {
-  height: 200px; overflow-y: auto;
-  padding: 10px 12px; font-family: var(--mono); font-size: 12px; line-height: 1.9;
+  height: 210px;
+  overflow-y: auto;
+  padding: 10px 14px;
+  font-family: var(--mono);
+  font-size: 12px;
+  line-height: 2;
 }
 #log::-webkit-scrollbar { width: 3px; }
 #log::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
 .log-ok      { color: var(--green); }
 .log-err     { color: var(--red); }
-.log-done    { color: var(--blue); margin-top: 4px; }
-.log-stopped { color: var(--amber); margin-top: 4px; }
+.log-done    { color: var(--blue); padding-top: 4px; }
+.log-stopped { color: var(--amber); padding-top: 4px; }
 
-#summary { display: none; margin-top: 12px; }
-#summary.show { display: grid; grid-template-columns: repeat(3,1fr); gap: 8px; }
+/* ── SUMMARY ── */
+#summary { display: none; margin-top: 14px; }
+#summary.show { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; }
 .stat {
-  background: var(--surface); border: 1px solid var(--border);
-  border-radius: var(--r); padding: 12px; text-align: center;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  padding: 14px;
+  text-align: center;
 }
-.stat-n { font-family: var(--mono); font-size: 22px; font-weight: 600; line-height: 1; }
-.stat-l { font-size: 11px; color: var(--muted); margin-top: 4px; text-transform: uppercase; letter-spacing: 0.5px; }
+.stat-n { font-family: var(--mono); font-size: 26px; font-weight: 600; line-height: 1; }
+.stat-l { font-size: 10px; color: var(--muted); margin-top: 5px; text-transform: uppercase; letter-spacing: 1px; }
 .n-total { color: var(--text); }
 .n-ok    { color: var(--green); }
 .n-err   { color: var(--red); }
 
 #btn-open {
-  display: none; width: 100%; margin-top: 8px; padding: 9px;
-  background: transparent; border: 1px solid var(--border);
-  border-radius: var(--r); color: var(--muted);
-  font-family: var(--sans); font-size: 13px; cursor: pointer;
-  transition: border-color 0.15s, color 0.15s;
+  display: none;
+  width: 100%;
+  margin-top: 10px;
+  padding: 10px;
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  color: var(--muted);
+  font-family: var(--sans);
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.15s;
 }
 #btn-open.show { display: block; }
-#btn-open:hover { border-color: var(--green); color: var(--green); }
+#btn-open:hover { border-color: var(--green); color: var(--green); background: rgba(54,201,126,0.04); }
 
-/* animations */
-.container > * { opacity: 0; transform: translateY(6px); animation: up 0.35s ease forwards; }
-.container > *:nth-child(1) { animation-delay: 0.05s; }
-.container > *:nth-child(2) { animation-delay: 0.10s; }
-.container > *:nth-child(3) { animation-delay: 0.15s; }
-.container > *:nth-child(4) { animation-delay: 0.18s; }
-.container > *:nth-child(5) { animation-delay: 0.21s; }
+/* ── ANIMATIONS ── */
+.container > * {
+  opacity: 0;
+  transform: translateY(8px);
+  animation: fadeup 0.4s ease forwards;
+}
+.container > *:nth-child(1) { animation-delay: 0.04s; }
+.container > *:nth-child(2) { animation-delay: 0.08s; }
+.container > *:nth-child(3) { animation-delay: 0.12s; }
+.container > *:nth-child(4) { animation-delay: 0.16s; }
+.container > *:nth-child(5) { animation-delay: 0.20s; }
 .container > *:nth-child(6) { animation-delay: 0.24s; }
-@keyframes up { to { opacity: 1; transform: translateY(0); } }
+@keyframes fadeup { to { opacity: 1; transform: translateY(0); } }
 </style>
 </head>
 <body>
 <div class="container">
 
+  <!-- HEADER -->
   <div class="header">
-    <h1>TGS <span>→</span> GIF</h1>
-    <p>Convert Telegram sticker packs to animated GIFs</p>
+    <h1><span class="tgs">TGS</span><span class="arrow">→</span><span class="gif">GIF</span></h1>
+    <p>Convert Telegram sticker packs to animated GIFs — locally, instantly</p>
   </div>
 
   <!-- INPUT -->
-  <div class="input-section">
-    <div class="label"><span class="step">01</span> Select stickers</div>
+  <div id="section-input">
+    <div class="label"><div class="step">1</div> Select stickers</div>
 
     <div class="mode-tabs">
       <button class="mode-tab active" id="tab-folder" onclick="setMode('folder')">Folder</button>
-      <button class="mode-tab" id="tab-files" onclick="setMode('files')">Individual files</button>
+      <button class="mode-tab"        id="tab-files"  onclick="setMode('files')">Individual files</button>
     </div>
 
     <!-- FOLDER MODE -->
     <div id="mode-folder">
-      <div class="drop-zone" id="folder-drop">
+      <div class="drop-zone" id="folder-drop" onclick="browseFolder()">
         <div class="dz-icon">📁</div>
         <div class="dz-title">Drop folder here</div>
-        <div class="dz-sub">or use the Browse button below</div>
-        <div class="dz-badge" id="folder-badge" style="display:none"></div>
+        <div class="dz-sub">or click / use Browse below</div>
+        <div class="dz-badge" id="folder-dz-badge"></div>
       </div>
-      <div class="browse-row">
-        <div class="path-field" id="folder-field">
-          <input type="text" id="folder-path" placeholder="D:\telegram\HANGSEED27.webp\HANGSEED27" autocomplete="off" spellcheck="false">
-          <div class="path-field-badge" id="folder-field-badge">—</div>
+      <div class="input-row">
+        <div class="path-box" id="folder-path-box">
+          <input type="text" id="folder-path" placeholder="D:\telegram\stickers" autocomplete="off" spellcheck="false">
+          <div class="path-badge" id="folder-badge">—</div>
         </div>
-        <button class="btn-browse" onclick="browseFolder()">Browse…</button>
+        <button class="btn-browse" onclick="browseFolder()">
+          <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M3 7a2 2 0 012-2h4l2 2h8a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2V7z"/></svg>
+          Browse
+        </button>
       </div>
     </div>
 
     <!-- FILES MODE -->
     <div id="mode-files" style="display:none">
-      <div class="drop-zone" id="files-drop">
+      <div class="drop-zone" id="files-drop" onclick="browseFiles()">
         <div class="dz-icon">🗂️</div>
         <div class="dz-title">Drop .tgs files here</div>
-        <div class="dz-sub">or use the Browse button to pick individual files</div>
-        <div class="dz-badge" id="files-badge" style="display:none"></div>
+        <div class="dz-sub">or click / use Browse to pick individual files<br>you can also drop a whole folder here</div>
+        <div class="dz-badge" id="files-dz-badge"></div>
       </div>
-      <div class="browse-row">
-        <button class="btn-browse" style="flex:1" onclick="browseFiles()">Browse files…</button>
+      <div class="input-row">
+        <button class="btn-browse" style="flex:1;justify-content:center" onclick="browseFiles()">
+          <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6z"/><polyline points="14 2 14 8 20 8"/></svg>
+          Browse files
+        </button>
         <button class="btn-browse" onclick="clearFiles()">Clear all</button>
       </div>
-      <div id="file-list-wrap">
+      <div class="file-list-wrap" id="file-list-wrap">
+        <div class="file-list-header">
+          <span id="file-list-count">0 files</span>
+          <button class="btn-clear" onclick="clearFiles()">Clear all</button>
+        </div>
         <div class="file-list" id="file-list"></div>
       </div>
     </div>
   </div>
 
   <!-- OUTPUT -->
-  <div class="output-section">
-    <div class="label"><span class="step">02</span> Output folder</div>
-    <div class="browse-row">
-      <div class="path-field" id="output-field">
+  <div id="section-output">
+    <div class="label"><div class="step">2</div> Output folder</div>
+    <div class="input-row">
+      <div class="path-box" id="output-path-box">
         <input type="text" id="output-path" placeholder="D:\telegram\out" autocomplete="off" spellcheck="false">
-        <div class="path-field-badge" id="output-badge">—</div>
+        <div class="path-badge" id="output-badge">—</div>
       </div>
-      <button class="btn-browse" onclick="browseOutput()">Browse…</button>
+      <button class="btn-browse" onclick="browseOutput()">
+        <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M3 7a2 2 0 012-2h4l2 2h8a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2V7z"/></svg>
+        Browse
+      </button>
     </div>
   </div>
 
   <div class="divider"></div>
 
+  <!-- ACTIONS -->
   <div class="btn-row">
     <button id="btn-convert" disabled>Convert</button>
-    <button id="btn-stop">Stop</button>
+    <button id="btn-stop">
+      <svg width="12" height="12" fill="currentColor" viewBox="0 0 16 16"><rect x="2" y="2" width="12" height="12" rx="2"/></svg>
+      Stop
+    </button>
   </div>
 
   <!-- PROGRESS -->
   <div id="progress-section">
-    <div class="progress-header">
-      <span class="progress-status" id="prog-status">Starting…</span>
-      <span class="progress-pct" id="prog-pct">0%</span>
+    <div class="prog-header">
+      <span class="prog-status" id="prog-status">Starting…</span>
+      <span class="prog-pct"    id="prog-pct">0%</span>
     </div>
-    <div class="progress-track">
-      <div class="progress-fill" id="prog-fill"></div>
-    </div>
+    <div class="prog-track"><div class="prog-fill" id="prog-fill"></div></div>
+
     <div class="log-wrap">
-      <div class="log-titlebar">
-        <span>Output</span>
+      <div class="log-bar">
+        <span>Log</span>
         <span id="log-count">0 / 0</span>
       </div>
       <div id="log"></div>
     </div>
+
     <div id="summary">
       <div class="stat"><div class="stat-n n-total" id="s-total">0</div><div class="stat-l">Total</div></div>
       <div class="stat"><div class="stat-n n-ok"    id="s-ok">0</div><div class="stat-l">Converted</div></div>
@@ -371,239 +534,209 @@ body {
 
 </div>
 <script>
-  let mode         = 'folder';
+  // ── state ──────────────────────────────────────────────────────────────
+  let mode          = 'folder';
   let selectedFiles = [];
-  let pollTimer    = null;
-  let lastLogLen   = 0;
-  let scanTimer    = null;
+  let pollTimer     = null;
+  let lastLogLen    = 0;
+  let scanTimer     = null;
 
-  // ── mode switch ───────────────────────────────────────────────────────
+  // ── elements ───────────────────────────────────────────────────────────
+  const $ = id => document.getElementById(id);
+  const folderPathEl = $('folder-path');
+  const outputPathEl = $('output-path');
+
+  // ── mode switch ────────────────────────────────────────────────────────
   function setMode(m) {
     mode = m;
-    document.getElementById('mode-folder').style.display = m === 'folder' ? 'block' : 'none';
-    document.getElementById('mode-files').style.display  = m === 'files'  ? 'block' : 'none';
-    document.getElementById('tab-folder').classList.toggle('active', m === 'folder');
-    document.getElementById('tab-files').classList.toggle('active',  m === 'files');
+    $('mode-folder').style.display = m === 'folder' ? 'block' : 'none';
+    $('mode-files').style.display  = m === 'files'  ? 'block' : 'none';
+    $('tab-folder').classList.toggle('active', m === 'folder');
+    $('tab-files').classList.toggle('active',  m === 'files');
     checkReady();
   }
 
-  // ── folder mode ───────────────────────────────────────────────────────
-  const folderPathEl  = document.getElementById('folder-path');
-  const folderDrop    = document.getElementById('folder-drop');
-  const folderBadge   = document.getElementById('folder-badge');
-  const folderFieldBadge = document.getElementById('folder-field-badge');
-  const folderField   = document.getElementById('folder-field');
-
+  // ── folder mode ────────────────────────────────────────────────────────
   folderPathEl.addEventListener('input', () => {
     clearTimeout(scanTimer);
-    folderFieldBadge.textContent = '…';
-    folderFieldBadge.className = 'path-field-badge';
-    folderField.className = 'path-field';
+    setBadge('folder-badge', '…', '');
     scanTimer = setTimeout(() => scanFolder(folderPathEl.value.trim()), 500);
   });
 
-  setupFolderDrop(folderDrop, async (path) => {
+  setupDrop($('folder-drop'), async path => {
     folderPathEl.value = path;
     await scanFolder(path);
   });
 
   async function scanFolder(path) {
-    if (!path) { folderFieldBadge.textContent = '—'; checkReady(); return; }
-    folderFieldBadge.textContent = '…';
+    if (!path) { setBadge('folder-badge', '—', ''); checkReady(); return; }
     try {
-      const r = await fetch('/scan-folder', {
-        method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ folder: path })
-      });
-      const d = await r.json();
+      const d = await post('/scan-folder', { folder: path });
       if (d.error || d.count === 0) {
-        folderFieldBadge.textContent = d.count === 0 ? 'no .tgs' : 'not found';
-        folderFieldBadge.className = 'path-field-badge err';
-        folderField.className = 'path-field error';
-        folderBadge.style.display = 'none';
-        folderDrop.className = 'drop-zone error';
+        setBadge('folder-badge', d.count === 0 ? 'no .tgs' : 'not found', 'err');
+        $('folder-path-box').className = 'path-box error';
+        setDzState('folder-drop', 'error');
+        setDzBadge('folder-dz-badge', '');
       } else {
-        folderFieldBadge.textContent = `${d.count} files`;
-        folderFieldBadge.className = 'path-field-badge ok';
-        folderField.className = 'path-field valid';
-        folderBadge.textContent = `${d.count} .tgs files found`;
-        folderBadge.style.display = 'inline-block';
-        folderDrop.className = 'drop-zone has-files';
+        setBadge('folder-badge', `${d.count} files`, 'ok');
+        $('folder-path-box').className = 'path-box valid';
+        setDzState('folder-drop', 'has-files');
+        setDzBadge('folder-dz-badge', `${d.count} .tgs files found`);
       }
-    } catch(e) {
-      folderFieldBadge.textContent = 'error';
-      folderFieldBadge.className = 'path-field-badge err';
-    }
+    } catch { setBadge('folder-badge', 'error', 'err'); }
     checkReady();
   }
 
   async function browseFolder() {
-    const r = await fetch('/browse-folder', {
-      method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ title: 'Select folder with .tgs files' })
-    });
-    const d = await r.json();
-    if (d.path) {
-      folderPathEl.value = d.path;
-      await scanFolder(d.path);
-    }
+    const d = await post('/browse-folder', { title: 'Select folder with .tgs files' });
+    if (d.path) { folderPathEl.value = d.path; await scanFolder(d.path); }
   }
 
-  // ── files mode ────────────────────────────────────────────────────────
-  const filesDrop  = document.getElementById('files-drop');
-  const filesBadge = document.getElementById('files-badge');
-  const fileListWrap = document.getElementById('file-list-wrap');
-  const fileListEl   = document.getElementById('file-list');
-
-  setupFolderDrop(filesDrop, async (path) => {
-    // dropped a folder in files mode — scan it
-    const r = await fetch('/scan-folder', {
-      method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ folder: path })
-    });
-    const d = await r.json();
-    if (d.files && d.files.length > 0) {
-      addFiles(d.files);
-    }
+  // ── files mode ─────────────────────────────────────────────────────────
+  setupDrop($('files-drop'), async path => {
+    // dropped a folder — scan it
+    const d = await post('/scan-folder', { folder: path });
+    if (d.files && d.files.length) addFiles(d.files);
   });
 
-  // also handle individual file drops
-  filesDrop.addEventListener('drop', async (e) => {
+  // also catch individual file drops on the same zone
+  $('files-drop').addEventListener('drop', e => {
+    e.stopPropagation();
     e.preventDefault();
-    filesDrop.classList.remove('drag-over');
+    $('files-drop').classList.remove('drag-over');
     const paths = [];
     for (const item of e.dataTransfer.items) {
       const entry = item.webkitGetAsEntry && item.webkitGetAsEntry();
       if (entry && entry.isFile && entry.name.toLowerCase().endsWith('.tgs')) {
-        const file = item.getAsFile();
-        if (file && file.path) paths.push(file.path);
+        const f = item.getAsFile();
+        if (f && f.path) paths.push(f.path);
       }
     }
-    if (paths.length > 0) addFiles(paths);
-  }, true); // use capture to override setupFolderDrop
+    if (paths.length) addFiles(paths);
+  }, true);
 
   async function browseFiles() {
-    const r = await fetch('/browse-files', {
-      method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({})
-    });
-    const d = await r.json();
-    if (d.files && d.files.length > 0) addFiles(d.files);
+    const d = await post('/browse-files', {});
+    if (d.files && d.files.length) addFiles(d.files);
   }
 
   function addFiles(paths) {
-    const existing = new Set(selectedFiles);
-    paths.forEach(p => { if (p && p.toLowerCase().endsWith('.tgs')) existing.add(p); });
-    selectedFiles = [...existing];
+    const set = new Set(selectedFiles);
+    paths.forEach(p => { if (p && p.toLowerCase().endsWith('.tgs')) set.add(p); });
+    selectedFiles = [...set];
     renderFileList();
     checkReady();
   }
 
-  function removeFile(path) {
-    selectedFiles = selectedFiles.filter(f => f !== path);
-    renderFileList();
-    checkReady();
+  function removeFile(p) {
+    selectedFiles = selectedFiles.filter(f => f !== p);
+    renderFileList(); checkReady();
   }
 
   function clearFiles() {
     selectedFiles = [];
-    renderFileList();
-    checkReady();
+    renderFileList(); checkReady();
   }
 
   function renderFileList() {
     const n = selectedFiles.length;
-    if (n === 0) {
-      fileListWrap.classList.remove('show');
-      filesBadge.style.display = 'none';
-      filesDrop.className = 'drop-zone';
+    const wrap = $('file-list-wrap');
+    const dz   = $('files-drop');
+    if (!n) {
+      wrap.classList.remove('show');
+      setDzState('files-drop', '');
+      setDzBadge('files-dz-badge', '');
       return;
     }
-    filesBadge.textContent = `${n} file${n !== 1 ? 's' : ''} selected`;
-    filesBadge.style.display = 'inline-block';
-    filesDrop.className = 'drop-zone has-files';
-    fileListWrap.classList.add('show');
-    fileListEl.innerHTML = `
-      <div class="file-list-header">
-        <span>${n} file${n !== 1 ? 's' : ''}</span>
-        <button class="btn-clear-all" onclick="clearFiles()">Clear all</button>
-      </div>
-    ` + selectedFiles.map(f => `
-      <div class="file-item">
-        <span>${f.split(/[\\/]/).pop()}</span>
-        <button class="file-item-remove" onclick="removeFile('${f.replace(/\\/g,'\\\\')}')" title="Remove">×</button>
-      </div>
-    `).join('');
+    wrap.classList.add('show');
+    setDzState('files-drop', 'has-files');
+    setDzBadge('files-dz-badge', `${n} file${n>1?'s':''} selected`);
+    $('file-list-count').textContent = `${n} file${n>1?'s':''}`;
+    $('file-list').innerHTML = selectedFiles.map(f => {
+      const safe = f.replace(/\\/g, '\\\\').replace(/'/g, "\\'");
+      const name = f.split(/[\\/]/).pop();
+      return `<div class="file-item">
+        <span class="file-item-name" title="${f}">${name}</span>
+        <button class="file-item-remove" onclick="removeFile('${safe}')">×</button>
+      </div>`;
+    }).join('');
   }
 
-  // ── output ────────────────────────────────────────────────────────────
-  const outputPathEl = document.getElementById('output-path');
-  const outputBadge  = document.getElementById('output-badge');
-  const outputField  = document.getElementById('output-field');
-
+  // ── output ─────────────────────────────────────────────────────────────
   outputPathEl.addEventListener('input', () => {
     const v = outputPathEl.value.trim();
-    if (v) { outputBadge.textContent = 'set'; outputBadge.className = 'path-field-badge ok'; }
-    else   { outputBadge.textContent = '—';   outputBadge.className = 'path-field-badge'; }
+    setBadge('output-badge', v ? 'set' : '—', v ? 'ok' : '');
     checkReady();
   });
 
   async function browseOutput() {
-    const r = await fetch('/browse-folder', {
-      method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ title: 'Select output folder' })
-    });
-    const d = await r.json();
+    const d = await post('/browse-folder', { title: 'Select output folder' });
     if (d.path) {
       outputPathEl.value = d.path;
-      outputBadge.textContent = 'set';
-      outputBadge.className = 'path-field-badge ok';
+      setBadge('output-badge', 'set', 'ok');
       checkReady();
     }
   }
 
-  // ── drag & drop helper ────────────────────────────────────────────────
-  function setupFolderDrop(zone, onFolder) {
+  // ── drag/drop helper ───────────────────────────────────────────────────
+  function setupDrop(zone, onFolder) {
     zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('drag-over'); });
     zone.addEventListener('dragleave', () => zone.classList.remove('drag-over'));
-    zone.addEventListener('drop', async (e) => {
+    zone.addEventListener('drop', async e => {
       e.preventDefault();
       zone.classList.remove('drag-over');
       for (const item of e.dataTransfer.items) {
         const entry = item.webkitGetAsEntry && item.webkitGetAsEntry();
         if (entry && entry.isDirectory) {
           const file = e.dataTransfer.files[0];
-          const path = file && file.path ? file.path : entry.fullPath;
+          const path = file && file.path ? file.path : null;
           if (path) { await onFolder(path); return; }
         }
       }
     });
-    zone.addEventListener('click', () => {
-      if (zone.id === 'folder-drop') browseFolder();
-      else browseFiles();
-    });
   }
 
-  // ── ready check ───────────────────────────────────────────────────────
+  // ── helpers ────────────────────────────────────────────────────────────
+  function setBadge(id, text, cls) {
+    const el = $(id);
+    el.textContent = text;
+    el.className = 'path-badge' + (cls ? ' ' + cls : '');
+  }
+
+  function setDzBadge(id, text) {
+    const el = $(id);
+    el.textContent = text;
+    el.classList.toggle('show', !!text);
+  }
+
+  function setDzState(id, state) {
+    $(id).className = 'drop-zone' + (state ? ' ' + state : '');
+  }
+
+  async function post(url, body) {
+    const r = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body)
+    });
+    return r.json();
+  }
+
   function checkReady() {
     const hasInput = mode === 'folder'
-      ? (document.getElementById('folder-field-badge').classList.contains('ok'))
+      ? $('folder-badge').classList.contains('ok')
       : selectedFiles.length > 0;
     const hasOutput = outputPathEl.value.trim().length > 0;
-    document.getElementById('btn-convert').disabled = !(hasInput && hasOutput);
+    $('btn-convert').disabled = !(hasInput && hasOutput);
   }
 
-  // ── convert ───────────────────────────────────────────────────────────
-  document.getElementById('btn-convert').addEventListener('click', async () => {
+  // ── convert ────────────────────────────────────────────────────────────
+  $('btn-convert').addEventListener('click', async () => {
     const out = outputPathEl.value.trim();
     let files = [];
 
     if (mode === 'folder') {
-      const r = await fetch('/scan-folder', {
-        method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ folder: folderPathEl.value.trim() })
-      });
-      const d = await r.json();
+      const d = await post('/scan-folder', { folder: folderPathEl.value.trim() });
       files = d.files || [];
       if (!files.length) { alert('No .tgs files found in that folder'); return; }
     } else {
@@ -611,92 +744,84 @@ body {
       if (!files.length) { alert('No files selected'); return; }
     }
 
-    document.getElementById('btn-convert').disabled = true;
-    document.getElementById('btn-stop').classList.add('show');
-    document.getElementById('progress-section').classList.add('show');
-    document.getElementById('summary').classList.remove('show');
-    document.getElementById('btn-open').classList.remove('show');
-    document.getElementById('log').innerHTML = '';
+    $('btn-convert').disabled = true;
+    $('btn-stop').classList.add('show');
+    $('progress-section').classList.add('show');
+    $('summary').classList.remove('show');
+    $('btn-open').classList.remove('show');
+    $('log').innerHTML = '';
     lastLogLen = 0;
-    document.getElementById('prog-fill').className = 'progress-fill';
-    document.getElementById('prog-fill').style.width = '0%';
-    document.getElementById('prog-status').textContent = 'Starting…';
-    document.getElementById('prog-pct').textContent = '0%';
-    document.getElementById('log-count').textContent = '0 / 0';
+    $('prog-fill').className = 'prog-fill';
+    $('prog-fill').style.width = '0%';
+    $('prog-status').textContent = 'Starting…';
+    $('prog-pct').textContent = '0%';
+    $('log-count').textContent = '0 / 0';
 
-    const r = await fetch('/convert', {
-      method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ files, output: out })
-    });
-    const d = await r.json();
+    const d = await post('/convert', { files, output: out });
     if (d.error) {
       alert(d.error);
-      document.getElementById('btn-convert').disabled = false;
-      document.getElementById('btn-stop').classList.remove('show');
+      $('btn-convert').disabled = false;
+      $('btn-stop').classList.remove('show');
       return;
     }
     pollTimer = setInterval(poll, 500);
   });
 
-  // ── stop ──────────────────────────────────────────────────────────────
-  document.getElementById('btn-stop').addEventListener('click', async () => {
+  // ── stop ───────────────────────────────────────────────────────────────
+  $('btn-stop').addEventListener('click', async () => {
     await fetch('/stop', { method: 'POST' });
-    document.getElementById('btn-stop').classList.remove('show');
+    $('btn-stop').classList.remove('show');
   });
 
-  // ── poll ──────────────────────────────────────────────────────────────
+  // ── poll ───────────────────────────────────────────────────────────────
   async function poll() {
-    const r = await fetch('/progress');
-    const d = await r.json();
+    const d = await (await fetch('/progress')).json();
     const pct = d.total > 0 ? Math.round((d.done / d.total) * 100) : 0;
-    document.getElementById('prog-fill').style.width = pct + '%';
-    document.getElementById('prog-pct').textContent  = pct + '%';
-    document.getElementById('log-count').textContent = `${d.done} / ${d.total}`;
-    document.getElementById('prog-status').textContent = d.running
-      ? `Converting… ${d.done} of ${d.total}` : d.stopped ? 'Stopped' : 'Done';
+    $('prog-fill').style.width = pct + '%';
+    $('prog-pct').textContent  = pct + '%';
+    $('log-count').textContent = `${d.done} / ${d.total}`;
+    $('prog-status').textContent = d.running
+      ? `Converting… ${d.done} of ${d.total}`
+      : d.stopped ? 'Stopped' : 'Done';
 
-    const logEl = document.getElementById('log');
-    const newEntries = d.log.slice(lastLogLen);
-    lastLogLen = d.log.length;
-    for (const e of newEntries) {
+    const logEl = $('log');
+    d.log.slice(lastLogLen).forEach(e => {
       const div = document.createElement('div');
       div.className = e.ok ? 'log-ok' : 'log-err';
       div.textContent = (e.ok ? '✓  ' : '✗  ') + e.name + (e.ok ? '' : '   ' + e.msg);
       logEl.appendChild(div);
-      logEl.scrollTop = logEl.scrollHeight;
-    }
+    });
+    lastLogLen = d.log.length;
+    logEl.scrollTop = logEl.scrollHeight;
 
     if (d.finished) {
       clearInterval(pollTimer);
-      document.getElementById('btn-stop').classList.remove('show');
-      document.getElementById('btn-convert').disabled = false;
+      $('btn-stop').classList.remove('show');
+      $('btn-convert').disabled = false;
       const ok  = d.log.filter(e => e.ok).length;
       const err = d.log.length - ok;
       const msg = document.createElement('div');
       if (d.stopped) {
-        document.getElementById('prog-fill').className = 'progress-fill stopped';
+        $('prog-fill').className = 'prog-fill stopped';
         msg.className = 'log-stopped';
         msg.textContent = `Stopped — ${ok} of ${d.done} converted`;
       } else {
-        document.getElementById('prog-fill').className = 'progress-fill done';
+        $('prog-fill').className = 'prog-fill done';
         msg.className = 'log-done';
         msg.textContent = `${ok} of ${d.total} converted successfully`;
       }
       logEl.appendChild(msg);
       logEl.scrollTop = logEl.scrollHeight;
-      document.getElementById('s-total').textContent = d.done;
-      document.getElementById('s-ok').textContent    = ok;
-      document.getElementById('s-err').textContent   = err;
-      document.getElementById('summary').classList.add('show');
-      document.getElementById('btn-open').classList.add('show');
+      $('s-total').textContent = d.done;
+      $('s-ok').textContent    = ok;
+      $('s-err').textContent   = err;
+      $('summary').classList.add('show');
+      $('btn-open').classList.add('show');
     }
   }
 
-  document.getElementById('btn-open').addEventListener('click', () => {
-    fetch('/open-folder', {
-      method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ folder: outputPathEl.value.trim() })
-    });
+  $('btn-open').addEventListener('click', () => {
+    post('/open-folder', { folder: outputPathEl.value.trim() });
   });
 </script>
 </body>
