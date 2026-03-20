@@ -43,39 +43,52 @@ def convert_worker(files, output_folder):
     progress_data["running"]  = False
     progress_data["finished"] = True
 
-def powershell_pick_folder(title="Select Folder"):
-    """Use modern Windows folder picker via PowerShell."""
-    script = (
+def _run_picker(script: str):
+    """Run a PowerShell picker script, returning stripped stdout."""
+    # Wrap in a hidden helper window so the dialog always appears on top
+    wrapper = (
         "Add-Type -AssemblyName System.Windows.Forms;"
-        "$d = New-Object System.Windows.Forms.FolderBrowserDialog;"
-        f"$d.Description = '{title}';"
-        "$d.UseDescriptionForTitle = $true;"
-        "$d.ShowNewFolderButton = $true;"
-        "[System.Windows.Forms.Application]::EnableVisualStyles();"
-        "if($d.ShowDialog() -eq 'OK'){$d.SelectedPath}else{''}"
+        "Add-Type -AssemblyName Microsoft.VisualBasic;"
+        # Create an invisible owner form so the dialog gets focus
+        "$owner = New-Object System.Windows.Forms.Form;"
+        "$owner.TopMost = $true;"
+        "$owner.StartPosition = 'Manual';"
+        "$owner.Location = New-Object System.Drawing.Point(0,0);"
+        "$owner.Size = New-Object System.Drawing.Size(1,1);"
+        "$owner.Show();"
+        "$owner.Hide();"
+        + script.replace("ShowDialog()", "ShowDialog($owner)")
+        + " $owner.Dispose();"
     )
     result = subprocess.run(
-        ["powershell", "-NoProfile", "-Command", script],
+        ["powershell", "-NoProfile", "-WindowStyle", "Hidden", "-Command", wrapper],
         capture_output=True, text=True
     )
     return result.stdout.strip()
 
-def powershell_pick_files():
-    """Use modern Windows multi-file picker via PowerShell."""
+def powershell_pick_folder(title="Select Folder"):
+    """Use modern Windows folder picker via PowerShell (always on top)."""
     script = (
-        "Add-Type -AssemblyName System.Windows.Forms;"
+        "[System.Windows.Forms.Application]::EnableVisualStyles();"
+        "$d = New-Object System.Windows.Forms.FolderBrowserDialog;"
+        f"$d.Description = '{title}';"
+        "$d.UseDescriptionForTitle = $true;"
+        "$d.ShowNewFolderButton = $true;"
+        "if($d.ShowDialog() -eq 'OK'){$d.SelectedPath}else{''}"
+    )
+    return _run_picker(script)
+
+def powershell_pick_files():
+    """Use modern Windows multi-file picker via PowerShell (always on top)."""
+    script = (
+        "[System.Windows.Forms.Application]::EnableVisualStyles();"
         "$d = New-Object System.Windows.Forms.OpenFileDialog;"
         "$d.Title = 'Select TGS Sticker Files';"
         "$d.Filter = 'Telegram Stickers (*.tgs)|*.tgs|All Files (*.*)|*.*';"
         "$d.Multiselect = $true;"
-        "[System.Windows.Forms.Application]::EnableVisualStyles();"
         "if($d.ShowDialog() -eq 'OK'){$d.FileNames -join [char]10}else{''}"
     )
-    result = subprocess.run(
-        ["powershell", "-NoProfile", "-Command", script],
-        capture_output=True, text=True
-    )
-    raw = result.stdout.strip()
+    raw = _run_picker(script)
     if not raw:
         return []
     return [f.strip() for f in raw.splitlines() if f.strip()]
@@ -88,6 +101,11 @@ def index():
 def browse_folder():
     title = request.json.get("title", "Select Folder")
     path = powershell_pick_folder(title)
+    return jsonify({"path": path})
+
+@app.route("/browse-output", methods=["POST"])
+def browse_output():
+    path = powershell_pick_folder("Select Output Folder")
     return jsonify({"path": path})
 
 @app.route("/browse-files", methods=["POST"])
